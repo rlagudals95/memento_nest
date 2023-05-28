@@ -127,14 +127,14 @@ export class AuthController {
     @Body() verifySmsDto: VerifySmsDto,
     @Req() request: Request,
     @GetLoginedUser() loginedUser: LoginedUser,
-  ): Promise<{ success: boolean }> {
-    return {
-      success: await this.authService.verifyCode(
-        request?.cookies[TEMP_TOKEN_NAME],
-        loginedUser?.id,
-        verifySmsDto,
-      ),
-    };
+  ): Promise<void> {
+    // return {
+    //   success: await this.authService.verifyCode(
+    //     request?.cookies[TEMP_TOKEN_NAME],
+    //     loginedUser?.id,
+    //     verifySmsDto,
+    //   ),
+    // };
   }
 
   @Public()

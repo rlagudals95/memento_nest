@@ -23,10 +23,10 @@ import {
   LoginResultDto,
   SendSmsDto,
   SmsVerificationCache,
-  VerifySmsDto,
+  //VerifySmsDto,
 } from './auth.dto';
 import { SmsService } from './sms/sms.service';
-import { AuthSmsVerificationRepository } from './auth-sms-verification.repository';
+//import { AuthSmsVerificationRepository } from './auth-sms-verification.repository';
 import { UserService } from '@modules/user/user.service';
 import { TempUserDto } from '@modules/user/temp-user.model';
 import { TempUserService } from '@modules/user/temp-user.service';
@@ -42,7 +42,7 @@ export class AuthService {
     private tempUserService: TempUserService,
     private configService: ConfigService,
     private smsService: SmsService,
-    private smsVerificationRepository: AuthSmsVerificationRepository,
+    //private smsVerificationRepository: AuthSmsVerificationRepository,
     private socialLoginService: SocialLoginService,
     private authTempTokenRepository: AuthTempTokenRepository,
     @Inject(WINSTON_MODULE_PROVIDER) private readonly logger: WinstonLogger,
@@ -71,7 +71,8 @@ export class AuthService {
         };
       }
     } else {
-      const cached = await this.authTempTokenRepository.get(token);
+      //const cached = await this.authTempTokenRepository.get(token);
+      const cached = null;
       if (!cached) {
         throw new BadRequestException('Invalid token');
       }
@@ -147,7 +148,7 @@ export class AuthService {
       }
 
       const cache: AppleCallbackAuthCache = { registeredUser, userId };
-      await this.authTempTokenRepository.set(token, JSON.stringify(cache));
+      //await this.authTempTokenRepository.set(token, JSON.stringify(cache));
 
       const feUrl = this.configService.get('FRONTEND_SITE_URL');
       const url = `${feUrl}/${loginMethod}/oauth/callback?token=${token}`;
@@ -182,50 +183,50 @@ export class AuthService {
         phone: request.phone,
         verificationCode,
       };
-      this.smsVerificationRepository.set(
-        smsVerificationKey,
-        JSON.stringify(cacheObj),
-      );
+      // this.smsVerificationRepository.set(
+      //   smsVerificationKey,
+      //   JSON.stringify(cacheObj),
+      // );
     } catch (error) {
       throw error;
     }
   }
 
-  private async getSmsVerificationInfo(
-    key: string,
-  ): Promise<SmsVerificationCache> {
-    const cached = await this.smsVerificationRepository.get(key);
-    if (!cached) {
-      throw new BadRequestException('verification code not found');
-    }
-    return JSON.parse(cached) as SmsVerificationCache;
-  }
+  // private async getSmsVerificationInfo(
+  //   key: string,
+  // ): Promise<SmsVerificationCache> {
+  //   const cached = await this.smsVerificationRepository.get(key);
+  //   if (!cached) {
+  //     throw new BadRequestException('verification code not found');
+  //   }
+  //   return JSON.parse(cached) as SmsVerificationCache;
+  // }
 
-  public async verifyCode(
-    tempToken: string,
-    userId: string,
-    request: VerifySmsDto,
-  ): Promise<boolean> {
-    if (!userId && !tempToken) {
-      throw new UnauthorizedException();
-    }
+  // public async verifyCode(
+  //   tempToken: string,
+  //   userId: string,
+  //   request: VerifySmsDto,
+  // ): Promise<boolean> {
+  //   if (!userId && !tempToken) {
+  //     throw new UnauthorizedException();
+  //   }
 
-    try {
-      const cachedObj = await this.getSmsVerificationInfo(userId ?? tempToken);
-      if (request.verificationCode === cachedObj.verificationCode) {
-        if (tempToken) {
-          const tempUser = await this.tempUserService.getUser(tempToken);
-          tempUser.phone = cachedObj.phone;
-          await this.tempUserService.updateUser(tempToken, tempUser);
-        }
-        return true;
-      } else {
-        return false;
-      }
-    } catch (error) {
-      throw error;
-    }
-  }
+  //   try {
+  //     const cachedObj = await this.getSmsVerificationInfo(userId ?? tempToken);
+  //     if (request.verificationCode === cachedObj.verificationCode) {
+  //       if (tempToken) {
+  //         const tempUser = await this.tempUserService.getUser(tempToken);
+  //         tempUser.phone = cachedObj.phone;
+  //         await this.tempUserService.updateUser(tempToken, tempUser);
+  //       }
+  //       return true;
+  //     } else {
+  //       return false;
+  //     }
+  //   } catch (error) {
+  //     throw error;
+  //   }
+  // }
 
   public getJwtToken(payload: AuthInfo) {
     return this.jwtService.sign({

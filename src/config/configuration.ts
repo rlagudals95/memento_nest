@@ -14,16 +14,20 @@ export const appConfig = () => ({
 let authSecretCache;
 export async function authSecretConfig() {
   if (!authSecretCache) {
-    const secret = await loadSecret(process.env.JWT_SECRET_NAME);
+    //const secret = await loadSecret(process.env.JWT_SECRET_NAME);
+    //@TODO aws secret manager로 변경
+    const secret = process.env.JWT_SECRET_NAME;
     authSecretCache = dotenv.parse(secret);
   }
   return authSecretCache;
 }
 
 export async function socialLoginConfig() {
-  const socialLoginSecret = await loadSecret(
-    process.env.SOCIAL_LOGIN_SECRET_NAME,
-  );
+  // const socialLoginSecret = await loadSecret(
+  //   process.env.SOCIAL_LOGIN_SECRET_NAME,
+  // );
+  // TODO - aws secret manager로 변경예정
+  const socialLoginSecret = process.env.SOCIAL_LOGIN_SECRET_NAME;
   return dotenv.parse(socialLoginSecret);
 }
 
