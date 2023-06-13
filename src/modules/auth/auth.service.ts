@@ -54,46 +54,9 @@ export class AuthService {
     token: string,
   ): Promise<LoginResult> {
     let userId: string;
-    if (code) {
-      const socialUserInfo = await this.socialLoginService.login(
-        loginMethod,
-        code,
-      );
-
-      userId = this.makeUserId(socialUserInfo.id, loginMethod);
-      const user = await this.userService.getUser(userId);
-      if (!user) {
-        const tempToken = generateNoDashUUID(10);
-        await this.createTempUser(socialUserInfo, loginMethod, tempToken);
-        return {
-          registeredUser: false,
-          tempToken,
-        };
-      }
-    } else {
-      //const cached = await this.authTempTokenRepository.get(token);
-      const cached = null;
-      if (!cached) {
-        throw new BadRequestException('Invalid token');
-      }
-      const appleAuthResult = JSON.parse(cached) as AppleCallbackAuthCache;
-      if (!appleAuthResult.registeredUser) {
-        return {
-          registeredUser: false,
-          tempToken: token,
-        };
-      }
-      userId = appleAuthResult.userId;
-      const { loginMethod: parsedLoginMethod } = this.parseUserId(userId);
-      if (loginMethod !== parsedLoginMethod) {
-        throw new BadRequestException(
-          `Token not matched with loginMethod=${loginMethod}`,
-        );
-      }
-    }
 
     return {
-      registeredUser: true,
+      userName: '',
       accessToken: await this.getAuthToken(userId),
     };
   }
