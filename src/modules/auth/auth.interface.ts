@@ -13,7 +13,6 @@ export interface AuthInfo {
 }
 
 export interface LoginResult {
-  registeredUser: boolean;
-  tempToken?: string;
+  userName: string;
   accessToken?: string;
 }

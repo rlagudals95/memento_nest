@@ -60,9 +60,11 @@ export class AuthController {
     @Query('token') token: string,
     @Res({ passthrough: true }) response: Response,
   ): Promise<LoginResultDto> {
+
     if (!code && !token) {
       throw new BadRequestException();
     }
+
     try {
       const result = await this.authService.login(loginMethod, code, token);
       response.cookie(TEMP_TOKEN_NAME, result.tempToken, {
